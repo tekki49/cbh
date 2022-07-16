@@ -17,11 +17,9 @@ You will be graded on the level of detail in each ticket, the clarity of the exe
 
 ## Your Breakdown Here
 1. For the first step, we need a way to capture the custom agent ids for each Agent by the facility. For this following changes need to be done. 
-    
     i. Change the `Facility` table to add one more column
         isSupportCustomAgentId (boolean)
         This will enable us to identify whether this new feature, will be used by the current facility or not, as not all facilities may need the feature(assumption. If not the case, the point i can be ignored fully).
-        
     ii. New database table to capture the interlinkage with following detils
         `FacilityAgentsCustomTable`
             facilityId (foreign key from Facilities table)
@@ -33,25 +31,21 @@ You will be graded on the level of detail in each ticket, the clarity of the exe
         Ability to view all the agents
         Create custom Ids for the agents
         Edit the custom Ids for the agents
-        
 2. The next step involves modifying the quarterly report where the facilities should see custom ids for their agents. For this following changes need to be done.
-
     i. Either 
         `getShiftsByFacility` needs to be modified by linking the facility id and agentid (assuming that agentid is also part of the metadata) to obtain custom agent ids as part of agent metadata. This is done by
             - Fetching custom agentIds from `FacilityAgentsCustomTable` table based on facilityId and agentId. 
             - This can be achieved either joining the new table with in the existing query fetch itself or a list of agentIds can be captured which are part of existing query fetch and fetching customAgentIds from `FacilityAgentsCustomTable` by querying based on facilityId and agentId in 'agentIds'
             - update the agent metadata along with the new information
+
         or 
         a new custom function can be written post fetching the data from `getShiftsByFacility`. 
             - In this we will fetch all the agentIds
             - Fetch customAgentIds from `FacilityAgentsCustomTable` by querying based on facilityId and agentId in 'agentIds'
             - construct a map with key as agentId and value as customAgentId
             - update the agent metadata for each shift
-        
     ii. Based on the complexity and use of `getShiftsByFacility` function in other places, a call can be taken. If `getShiftsByFacility` is also used by other places quite a lot, new custom function can be built, if not then `getShiftsByFacility` could be modified as discussed in #i of (2)
-    
 3. The final step involves modifying the existing `generateReport` function. For this, following changes need to be done. Assuming the shift info contains the metadata of each associated agent and each agent metadata has been updated in (2)
-
     i. Iterate through the shift details, 
         if the agent metadata contains the customAgentId, then we will print it instead of agentId
         if the agent metadata doesnt contain such customAgentId, we will print it as ususal.
